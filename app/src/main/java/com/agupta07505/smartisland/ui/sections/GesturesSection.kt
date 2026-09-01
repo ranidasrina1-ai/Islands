@@ -1,0 +1,457 @@
+/*
+ * Smart Island (2026)
+ * © Animesh Gupta — github.com/agupta07505
+ * Licensed under the GNU GPL v3 License
+ * Do not remove or alter this notice. - Per GPL-3.0 Section 4 & Section 5
+ */
+
+package com.agupta07505.smartisland.ui.sections
+
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.*
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+
+import androidx.compose.ui.res.stringResource
+import com.agupta07505.smartisland.R
+
+import androidx.compose.foundation.clickable
+import androidx.compose.ui.text.style.TextOverflow
+
+@Composable
+fun GesturesSection() {
+    var selectedTab by remember { mutableIntStateOf(0) }
+    val tabs = listOf(
+        stringResource(R.string.gesture_1_tap_tab),
+        stringResource(R.string.gesture_2_swipe_up_tab),
+        stringResource(R.string.gesture_3_hold_swipe_up_tab),
+        stringResource(R.string.gesture_4_swipe_down_tab),
+        stringResource(R.string.gesture_5_swipe_horizontal_tab)
+    )
+
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 24.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        // Quick Reference Card
+        Card(
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+            shape = RoundedCornerShape(20.dp),
+            border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)),
+            modifier = Modifier.fillMaxWidth(),
+            elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(
+                        modifier = Modifier
+                            .size(36.dp)
+                            .clip(CircleShape)
+                            .background(MaterialTheme.colorScheme.primary.copy(alpha = 0.15f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(
+                            Icons.Rounded.Gesture,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.primary,
+                            modifier = Modifier.size(20.dp)
+                        )
+                    }
+                    Spacer(Modifier.width(12.dp))
+                    Column {
+                        Text(
+                            text = stringResource(R.string.gestures_guide_title),
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                        Text(
+                            text = stringResource(R.string.gestures_guide_desc),
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant
+                        )
+                    }
+                }
+
+                HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+
+                // Summary Clickable Gesture Badges
+                Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        GestureSummaryBadge(
+                            icon = Icons.Rounded.TouchApp,
+                            label = stringResource(R.string.gesture_1_tap_title),
+                            sub = stringResource(R.string.gesture_1_tap_sub),
+                            color = Color(0xFF38BDF8),
+                            isSelected = selectedTab == 0,
+                            onClick = { selectedTab = 0 },
+                            modifier = Modifier.weight(1f)
+                        )
+                        GestureSummaryBadge(
+                            icon = Icons.Rounded.ArrowUpward,
+                            label = stringResource(R.string.gesture_2_swipe_up_title),
+                            sub = stringResource(R.string.gesture_2_swipe_up_sub),
+                            color = Color(0xFFEF4444),
+                            isSelected = selectedTab == 1,
+                            onClick = { selectedTab = 1 },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        GestureSummaryBadge(
+                            icon = Icons.Rounded.DeleteSweep,
+                            label = stringResource(R.string.gesture_3_hold_swipe_up_title),
+                            sub = stringResource(R.string.gesture_3_hold_swipe_up_sub),
+                            color = Color(0xFFF59E0B),
+                            isSelected = selectedTab == 2,
+                            onClick = { selectedTab = 2 },
+                            modifier = Modifier.weight(1f)
+                        )
+                        GestureSummaryBadge(
+                            icon = Icons.Rounded.ArrowDownward,
+                            label = stringResource(R.string.gesture_4_swipe_down_title),
+                            sub = stringResource(R.string.gesture_4_swipe_down_sub),
+                            color = Color(0xFF10B981),
+                            isSelected = selectedTab == 3,
+                            onClick = { selectedTab = 3 },
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                    GestureSummaryBadge(
+                        icon = Icons.Rounded.Swipe,
+                        label = stringResource(R.string.gesture_5_swipe_horizontal_title),
+                        sub = stringResource(R.string.gesture_5_swipe_horizontal_sub),
+                        color = Color(0xFFA855F7),
+                        isSelected = selectedTab == 4,
+                        onClick = { selectedTab = 4 },
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                }
+            }
+        }
+
+        // Scrollable Tabs for Selecting Each Gesture Guide
+        ScrollableTabRow(
+            selectedTabIndex = selectedTab,
+            edgePadding = 12.dp,
+            containerColor = Color.Transparent,
+            contentColor = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            tabs.forEachIndexed { index, label ->
+                Tab(
+                    selected = selectedTab == index,
+                    onClick = { selectedTab = index },
+                    text = {
+                        Text(
+                            text = label,
+                            fontWeight = if (selectedTab == index) FontWeight.Bold else FontWeight.Medium,
+                            fontSize = 13.sp
+                        )
+                    }
+                )
+            }
+        }
+
+        // Detailed Text Step-by-Step Instructions for Selected Gesture
+        when (selectedTab) {
+            0 -> GestureDetailCard(
+                gestureNumber = "1 / 5",
+                gestureName = stringResource(R.string.gesture_1_tap_title),
+                actionBadge = stringResource(R.string.gesture_1_tap_sub),
+                badgeColor = Color(0xFF38BDF8),
+                icon = Icons.Rounded.TouchApp,
+                overview = stringResource(R.string.gesture_1_tap_desc),
+                steps = listOf(
+                    "Touch Position: Tap once anywhere on the black collapsed island pill at the top of your screen.",
+                    "Finger Motion: Tap cleanly without dragging or swiping.",
+                    "Visual Response: The pill smoothly expands into the full card showing notification details, action buttons, and media scrubber.",
+                    "To Collapse Back: Tap anywhere on the empty screen background or tap outside the expanded card to collapse it back into the pill."
+                ),
+                proTip = "When 'Hide when idle' is enabled, tapping the camera cutout region still awakens the pill and opens your favorite app shortcuts."
+            )
+            1 -> GestureDetailCard(
+                gestureNumber = "2 / 5",
+                gestureName = stringResource(R.string.gesture_2_swipe_up_title),
+                actionBadge = stringResource(R.string.gesture_2_swipe_up_sub),
+                badgeColor = Color(0xFFEF4444),
+                icon = Icons.Rounded.ArrowUpward,
+                overview = stringResource(R.string.gesture_2_swipe_up_desc),
+                steps = listOf(
+                    "Touch Position: Touch anywhere on the expanded notification card.",
+                    "Finger Motion: Quickly flick or swipe your finger upward toward the top bezel of your device.",
+                    "Threshold: Drag upward by at least 48dp and release your finger.",
+                    "Visual Response: The card animates upward with momentum and leaves the screen. If more notifications exist, the next one smoothly slides forward."
+                ),
+                proTip = "If you release your finger before reaching the swipe threshold, spring physics smoothly restores the card back to center."
+            )
+            2 -> GestureDetailCard(
+                gestureNumber = "3 / 5",
+                gestureName = stringResource(R.string.gesture_3_hold_swipe_up_title),
+                actionBadge = stringResource(R.string.gesture_3_hold_swipe_up_sub),
+                badgeColor = Color(0xFFF59E0B),
+                icon = Icons.Rounded.DeleteSweep,
+                overview = stringResource(R.string.gesture_3_hold_swipe_up_desc),
+                steps = listOf(
+                    "Touch Position: Touch and hold your finger on the expanded island card.",
+                    "Hold Duration: Keep your finger down for 300ms until you feel a distinct haptic vibration pulse.",
+                    "Finger Motion: As soon as you feel the vibration, immediately swipe your finger upward toward the top of the screen and release.",
+                    "Visual Response: All pending notifications in the stack are dismissed simultaneously, and the island collapses cleanly."
+                ),
+                proTip = "The haptic vibration confirms that 'Clear All' mode is engaged. Swiping up before the vibration only dismisses the single active notification."
+            )
+            3 -> GestureDetailCard(
+                gestureNumber = "4 / 5",
+                gestureName = stringResource(R.string.gesture_4_swipe_down_title),
+                actionBadge = stringResource(R.string.gesture_4_swipe_down_sub),
+                badgeColor = Color(0xFF10B981),
+                icon = Icons.Rounded.ArrowDownward,
+                overview = stringResource(R.string.gesture_4_swipe_down_desc),
+                steps = listOf(
+                    "Touch Position: Touch the expanded notification card.",
+                    "Finger Motion: Drag or swipe downward toward the center of your screen by at least 48dp.",
+                    "Release: Release your finger once the downward drag threshold is reached.",
+                    "Visual Response: SmartIsland triggers a freeform floating window for the target application over your current app."
+                ),
+                proTip = "Freeform floating window mode works best when Shizuku service is running or on Android ROMs with native freeform multi-window enabled."
+            )
+            4 -> GestureDetailCard(
+                gestureNumber = "5 / 5",
+                gestureName = stringResource(R.string.gesture_5_swipe_horizontal_title),
+                actionBadge = stringResource(R.string.gesture_5_swipe_horizontal_sub),
+                badgeColor = Color(0xFFA855F7),
+                icon = Icons.Rounded.Swipe,
+                overview = stringResource(R.string.gesture_5_swipe_horizontal_desc),
+                steps = listOf(
+                    "Prerequisite: 2 or more notifications or an active media session are present in Smart Island.",
+                    "Touch Position: Place your finger on the expanded card.",
+                    "Finger Motion: Swipe horizontally to the LEFT to view the next notification, or swipe to the RIGHT to return to the previous one.",
+                    "Snapping: The horizontal pager automatically snaps cleanly to the centered card with smooth physics."
+                ),
+                proTip = "You can swipe between cards as fast as you like — the updated pager uses settled-page synchronization to ensure cards never get stuck midway."
+            )
+        }
+    }
+}
+
+@Composable
+private fun GestureSummaryBadge(
+    icon: ImageVector,
+    label: String,
+    sub: String,
+    color: Color,
+    isSelected: Boolean = false,
+    onClick: () -> Unit = {},
+    modifier: Modifier = Modifier
+) {
+    Surface(
+        modifier = modifier.clickable(onClick = onClick),
+        shape = RoundedCornerShape(12.dp),
+        color = if (isSelected) color.copy(alpha = 0.2f) else color.copy(alpha = 0.08f),
+        border = BorderStroke(if (isSelected) 1.5.dp else 1.dp, if (isSelected) color else color.copy(alpha = 0.25f))
+    ) {
+        Row(
+            modifier = Modifier.padding(vertical = 8.dp, horizontal = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(28.dp)
+                    .clip(CircleShape)
+                    .background(color.copy(alpha = 0.15f)),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(icon, contentDescription = null, tint = color, modifier = Modifier.size(16.dp))
+            }
+            Column(modifier = Modifier.weight(1f)) {
+                Text(label, fontSize = 12.sp, fontWeight = FontWeight.Bold, color = color, maxLines = 1)
+                Text(sub, fontSize = 10.sp, color = MaterialTheme.colorScheme.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            }
+        }
+    }
+}
+
+@Composable
+private fun GestureDetailCard(
+    gestureNumber: String,
+    gestureName: String,
+    actionBadge: String,
+    badgeColor: Color,
+    icon: ImageVector,
+    overview: String,
+    steps: List<String>,
+    proTip: String
+) {
+    Card(
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        shape = RoundedCornerShape(20.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.4f)),
+        modifier = Modifier.fillMaxWidth(),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            // Header
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(44.dp)
+                            .clip(CircleShape)
+                            .background(badgeColor.copy(alpha = 0.15f)),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Icon(icon, contentDescription = null, tint = badgeColor, modifier = Modifier.size(24.dp))
+                    }
+                    Column {
+                        Text(
+                            text = gestureNumber,
+                            fontSize = 11.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = badgeColor
+                        )
+                        Text(
+                            text = gestureName,
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onSurface
+                        )
+                    }
+                }
+
+                Surface(
+                    shape = RoundedCornerShape(8.dp),
+                    color = badgeColor.copy(alpha = 0.15f),
+                    border = BorderStroke(1.dp, badgeColor.copy(alpha = 0.3f))
+                ) {
+                    Text(
+                        text = actionBadge,
+                        fontSize = 11.sp,
+                        fontWeight = FontWeight.Bold,
+                        color = badgeColor,
+                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+                    )
+                }
+            }
+
+            // Overview
+            Text(
+                text = overview,
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                lineHeight = 20.sp
+            )
+
+            HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f))
+
+            // Step-by-Step Instructions
+            Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                Text(
+                    text = "How to Perform This Gesture:",
+                    style = MaterialTheme.typography.titleSmall,
+                    fontWeight = FontWeight.Bold,
+                    color = MaterialTheme.colorScheme.onSurface
+                )
+
+                steps.forEachIndexed { index, step ->
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(10.dp),
+                        verticalAlignment = Alignment.Top
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(22.dp)
+                                .clip(CircleShape)
+                                .background(badgeColor.copy(alpha = 0.15f)),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Text(
+                                text = "${index + 1}",
+                                fontSize = 11.sp,
+                                fontWeight = FontWeight.Bold,
+                                color = badgeColor
+                            )
+                        }
+                        Text(
+                            text = step,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            lineHeight = 18.sp,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+            }
+
+            // Pro Tip Box
+            Surface(
+                shape = RoundedCornerShape(12.dp),
+                color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f),
+                border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.3f)),
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Row(
+                    modifier = Modifier.padding(14.dp),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp),
+                    verticalAlignment = Alignment.Top
+                ) {
+                    Icon(
+                        Icons.Rounded.Lightbulb,
+                        contentDescription = "Pro Tip",
+                        tint = Color(0xFFFACC15),
+                        modifier = Modifier.size(18.dp)
+                    )
+                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        Text(
+                            text = "PRO TIP",
+                            fontSize = 10.sp,
+                            fontWeight = FontWeight.ExtraBold,
+                            color = Color(0xFFFACC15)
+                        )
+                        Text(
+                            text = proTip,
+                            style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            lineHeight = 16.sp
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
