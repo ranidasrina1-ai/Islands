@@ -74,6 +74,7 @@ class IslandViewModel(
     )
 
     private var autoCollapseJob: Job? = null
+    private val autoDismissTimers = mutableMapOf<String, Job>()
 
     init {
         viewModelScope.launch {
@@ -81,6 +82,22 @@ class IslandViewModel(
                 visibleNotifications.collect { list ->
                     selectedIndex.update { currentSelected ->
                         currentSelected.coerceIn(0, (list.size - 1).coerceAtLeast(0))
+                    }
+                    
+                    // NEW: Start auto-dismiss timer for each new notification
+                    for (notification in list) {
+                        if (!autoDismissTimers.containsKey(notification.key)) {
+                            startAutoDismissTimer(notification.key)
+                        }
+                    }
+                    
+                    // NEW: Cancel timers for removed notifications
+                    val currentKeys = list.map { it.key }.toSet()
+                    autoDismissTimers.keys.toList().forEach { key ->
+                        if (!currentKeys.contains(key)) {
+                            autoDismissTimers[key]?.cancel()
+                            autoDismissTimers.remove(key)
+                        }
                     }
                 }
             }
@@ -175,6 +192,19 @@ class IslandViewModel(
         }
     }
 
+    private fun startAutoDismissTimer(notificationKey: String) {
+        autoDismissTimers[notificationKey]?.cancel()
+        autoDismissTimers[notificationKey] = viewModelScope.launch {
+            delay(AUTO_DISMISS_TIMEOUT_MS)
+            notificationRepo.removeNotification(notificationKey)
+            autoDismissTimers.remove(notificationKey)
+        }
+    }
+
+    fun resetAutoDismissTimer(notificationKey: String) {
+        startAutoDismissTimer(notificationKey)
+    }
+
     fun setSelectedNotificationIndex(index: Int) {
         val list = visibleNotifications.value
         if (index in list.indices) {
@@ -190,6 +220,8 @@ class IslandViewModel(
             val notification = list[index]
             notificationRepo.removeNotification(notification.key)
             notificationRepo.sendCommand(SmartIslandCommand.CancelNotification(notification.key))
+            autoDismissTimers[notification.key]?.cancel()
+            autoDismissTimers.remove(notification.key)
         }
         collapse()
     }
@@ -198,6 +230,8 @@ class IslandViewModel(
         val list = visibleNotifications.value
         for (notification in list) {
             notificationRepo.sendCommand(SmartIslandCommand.CancelNotification(notification.key))
+            autoDismissTimers[notification.key]?.cancel()
+            autoDismissTimers.remove(notification.key)
         }
         notificationRepo.removeAllNotifications()
         collapse()
@@ -206,6 +240,7 @@ class IslandViewModel(
     companion object {
         private const val TAG = "IslandViewModel"
         private const val AUTO_COLLAPSE_DELAY_MS = 5000L
+        private const val AUTO_DISMISS_TIMEOUT_MS = 30000L
 
         fun provideFactory(
             settingsRepo: SmartIslandSettingsRepository,

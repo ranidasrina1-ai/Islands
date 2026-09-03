@@ -37,13 +37,6 @@ class SmartIslandNotificationRepository : INotificationRepository {
     override val commands: SharedFlow<SmartIslandCommand> = _commands.asSharedFlow()
 
     override fun postNotification(notification: IslandNotification, autoExpand: Boolean) {
-        // Smart Island — Music Edition: only Music-mode notifications are accepted.
-        // Every other feature (calls, battery, bluetooth, hotspot, flashlight, timers,
-        // stopwatch, navigation, downloads, live activities, screen recording, generic
-        // notifications) is intentionally filtered out at this single ingestion point.
-        if (notification.mode != IslandMode.Music) {
-            return
-        }
         var isNewNotification = false
         _notifications.update { existingNotifications ->
             val updated = existingNotifications.toMutableList()

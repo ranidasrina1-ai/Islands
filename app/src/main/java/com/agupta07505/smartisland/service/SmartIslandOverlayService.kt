@@ -600,7 +600,12 @@ class SmartIslandOverlayService : AccessibilityService() {
         viewModel.isLocked.value = isLocked
         
         val isLandscape = resources.configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE
-        val isHidden = (!settings.showOnLockScreen && isLocked) || (isLandscape && !settings.showInLandscape)
+        val hasNotifications = viewModel.notifications.value.isNotEmpty()
+        val isHidden = (
+            (!settings.showOnLockScreen && isLocked) || 
+            (isLandscape && !settings.showInLandscape) ||
+            !hasNotifications
+        )
 
         val targetVisibility = if (isHidden) android.view.View.GONE else android.view.View.VISIBLE
         if (view.visibility != targetVisibility) {
